@@ -1,0 +1,10 @@
+{
+  "posts": [
+    {
+      "id": 1,
+      "caption": "Welcome to OSHI FISH",
+      "media": "example.jpg",
+      "type": "image"
+    }
+  ]
+}
