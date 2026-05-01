@@ -1,0 +1,179 @@
+<!-- OSHI FISH (GitHub Pages Ready - Vanilla JS) -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Aquarium Social Feed</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      overflow-x: hidden;
+      background: linear-gradient(to bottom, #001f3f, #0074D9, #7FDBFF);
+      color: white;
+    }
+
+    header {
+      text-align: center;
+      padding: 20px;
+      font-size: 28px;
+      font-weight: bold;
+    }
+
+    /* bubbles */
+    .bubble {
+      position: fixed;
+      bottom: -20px;
+      width: 8px;
+      height: 8px;
+      background: rgba(255,255,255,0.4);
+      border-radius: 50%;
+      animation: rise 10s infinite ease-in;
+      z-index: 0;
+    }
+
+    @keyframes rise {
+      0% { transform: translateY(0); opacity: 0; }
+      50% { opacity: 1; }
+      100% { transform: translateY(-110vh); opacity: 0; }
+    }
+
+    .container {
+      position: relative;
+      z-index: 2;
+    }
+
+    .upload {
+      max-width: 500px;
+      margin: auto;
+      background: rgba(0,0,0,0.4);
+      padding: 15px;
+      border-radius: 15px;
+    }
+
+    input, button {
+      width: 100%;
+      margin-top: 10px;
+      padding: 10px;
+      border-radius: 10px;
+      border: none;
+    }
+
+    button {
+      background: #00aced;
+      color: white;
+      cursor: pointer;
+    }
+
+    .feed {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 15px;
+      padding: 20px;
+      max-width: 1000px;
+      margin: auto;
+    }
+
+    .card {
+      background: rgba(0,0,0,0.45);
+      border-radius: 15px;
+      padding: 10px;
+    }
+
+    img, video {
+      width: 100%;
+      border-radius: 10px;
+    }
+
+    .btn {
+      display: block;
+      text-align: center;
+      margin-top: 8px;
+      padding: 8px;
+      background: #0074D9;
+      color: white;
+      border-radius: 10px;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+
+<header>🐠 OSHI FISH</header>
+
+<div class="container">
+  <div class="upload" id="uploadBox">
+    <input type="text" id="caption" placeholder="Write a caption..." />
+    <input type="file" id="file" accept="image/*,video/*" />
+    <button onclick="addPost()">Post to Aquarium</button>
+  </div>
+
+  <div class="feed" id="feed"></div>
+</div>
+
+<script>
+const FB_USERNAME = "your.facebook.username";
+
+// 🔐 OWNER CONTROL (ONLY YOU CAN POST & DELETE)
+const OWNER_PASSWORD = "4842435258951@"; // change this
+let isOwner = false;
+
+// ask owner login
+const inputPass = prompt("Enter owner password (leave blank for guest mode):");
+if (inputPass === OWNER_PASSWORD) {
+  isOwner = true;
+} else {
+  document.getElementById("uploadBox").style.display = "none";
+}
+
+function addPost() {
+  if (!isOwner) return;
+
+  const fileInput = document.getElementById("file");
+  const captionInput = document.getElementById("caption");
+
+  const file = fileInput.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+
+  reader.onload = function(e) {
+    const url = e.target.result;
+    const type = file.type.startsWith("video") ? "video" : "image";
+
+    const card = document.createElement("div");
+    card.className = "card";
+
+    const deleteBtn = isOwner ? `<button class=\"btn\" onclick=\"this.parentElement.remove()\">🗑 Delete Post</button>` : "";
+
+    card.innerHTML = `
+      ${type === "image" ? `<img src="${url}" />` : `<video src="${url}" controls></video>`}
+      <p>🐟 ${captionInput.value}</p>
+      <a class="btn" href="https://m.me/${FB_USERNAME}" target="_blank">
+        💬 Message me on Messenger
+      </a>
+      ${deleteBtn}
+    `;
+
+    document.getElementById("feed").prepend(card);
+  };
+
+  reader.readAsDataURL(file);
+
+  captionInput.value = "";
+  fileInput.value = "";
+}
+
+// aquarium bubbles
+for (let i = 0; i < 35; i++) {
+  const b = document.createElement("div");
+  b.className = "bubble";
+  b.style.left = Math.random() * 100 + "vw";
+  b.style.animationDuration = (5 + Math.random() * 10) + "s";
+  document.body.appendChild(b);
+}
+</script>
+
+</body>
+</html>
